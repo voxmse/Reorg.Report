@@ -1,0 +1,30 @@
+ACCVGSOHCL – no reorder, unique access by PK
+
+BASE_TAB   BASE_IND                       OBJECT_NAME                    OPERATION    OPTIONS               COLS OBJECT_NAME_I                   OPERATION_I OPTIONS_I   COLS_I  PCT_TOTAL     PCT_FG
+---------- ------------------------------ ------------------------------ ------------ --------------------- ---- ------------------------------- ----------- ----------- ------ ---------- ----------
+ACCVGSOHCL ACCVGSOHPK                     ACCVGSOHCL                     TABLE ACCESS BY INDEX ROWID           0 ACCVGSOHPK                      INDEX       RANGE SCAN       4        ,13       6,37
+ 
+TABLE_NAME                     INDEX_NAME                       NUM_ROWS CLUSTERING_FACTOR TAB_BLOCKS   IND_ROWS COLS
+------------------------------ ------------------------------ ---------- ----------------- ---------- ---------- ------------------------------------------------------------------------------------------------------------------------
+ACCVGSOHCL                     ACCVACOPFK                       18808574           4323185     114059   19870856 ACCVACOPR1,ACCVACOPR2
+ACCVGSOHCL                     ACCVGSOHPK                       18808574          13901495     114059   19265995 ACCVACOPR1,ACCVACGSR2,ACCVACGSR3,ACCVACGSR4,ACCVACOPR2
+ACCVGSOHCL                     ACCVPRPEFK                       18808574           2808879     114059   18975785 ACCVPRPEI1
+
+
+
+ACE1COTHCL –  reorder by ACE1ACETR2,ACE1ACETR3,ACE1ACETR1, drop index ACE1N004
+
+BASE_TAB   BASE_IND                       OBJECT_NAME                    OPERATION    OPTIONS               COLS OBJECT_NAME_I                   OPERATION_I OPTIONS_I   COLS_I  PCT_TOTAL     PCT_FG
+---------- ------------------------------ ------------------------------ ------------ --------------------- ---- ------------------------------- ----------- ----------- ------ ---------- ----------
+ACE1COTHCL ACE1COTHPK                     ACE1COTHPK                     INDEX        RANGE SCAN               3                                                                      1,45          0
+           ACE1COTHPK                     ACE1COTHPK                     INDEX        UNIQUE SCAN              7                                                                       ,34      12,25
+           ACE1COTHPK                     ACE1COTHCL                     TABLE ACCESS BY INDEX ROWID           0 ACE1COTHPK                      INDEX       UNIQUE SCAN      7       1,69      48,23
+           ACE1COTHPK                     ACE1COTHCL                     TABLE ACCESS BY INDEX ROWID           0 ACE1COTHPK                      INDEX       RANGE SCAN       3       3,75          0
+           ACE1N004                       ACE1COTHCL                     TABLE ACCESS BY INDEX ROWID           0 ACE1N004                        INDEX       RANGE SCAN       2        ,38          0
+ 
+TABLE_NAME                     INDEX_NAME                       NUM_ROWS CLUSTERING_FACTOR TAB_BLOCKS   IND_ROWS COLS
+------------------------------ ------------------------------ ---------- ----------------- ---------- ---------- ------------------------------------------------------------------------------------------------------------------------
+ACE1COTHCL                     ACE1COTHPK                      607722877         224491255    8597147  597817739 ACE1ACETR2,ACE1ACETR3,ACE1ACETR1,ACE1ACCOR3,ACE1ACCOR2,ACE1NUMECH,ACE1ACOPR2
+ACE1COTHCL                     ACE1N002                        607722877          18422110    8597147  533511997 ACE1ACOPR3
+ACE1COTHCL                     ACE1N003                        607722877         290081079    8597147  401530190 ACE1ACE2R4,ACE1ACE2R2
+ACE1COTHCL                     ACE1N004                        607722877          17828203    8597147  608445376 ACE1ACE2R2,ACE1ACETR3

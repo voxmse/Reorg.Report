@@ -1,0 +1,125 @@
+The idea is simple. This is a list of the tables, which may be the most sensitive to the clustering factor
+of the most used indexes. We estimate the total time spent by the DB on INDEX SCANs.
+
+PCT_TOTAL - % of the global "DB time" spent by
+	1)INDEX_SCAN if OBJECT_NAME=index_name 
+	2)INDEX_SCAN+TABLE_ACCESS_BY_ROWID if OBJECT_NAME=table_name
+
+PCT_FG - % of PCT_TOTAL spent during daytime(09h-18h Mon-Fri, FOREGROUND TIME, usual,non-batch activity, for a batch activity detection)
+
+The value of PCT_TOTAL allows us to estimate the profit of a table reorganisation(reorder).
+The possible pitfalls are:
+	 1)An unique index scan(all columns) just for a row
+	 2)On the same table we may gain with one index but loose with another one.
+	 3)This version of the report allows us to estimate about >95% of SQL plans. For the rest an additional manual work should be done(SQL plan may be too complex to allow us to match undoubtedly a TABLE_ACCESS_BY_ROWID operation with a corresponding INDEX_SCAN
+
+
+BASE_TAB   BASE_IND                       OBJECT_NAME                    OPERATION    OPTIONS               COLS OBJECT_NAME_I                   OPERATION_I OPTIONS_I   COLS_I  PCT_TOTAL     PCT_FG
+---------- ------------------------------ ------------------------------ ------------ --------------------- ---- ------------------------------- ----------- ----------- ------ ---------- ----------
+ACCVGSOHCL ACCVGSOHPK                     ACCVGSOHCL                     TABLE ACCESS BY INDEX ROWID           0 ACCVGSOHPK                      INDEX       RANGE SCAN       4        ,13       6,37
+ACDEDOEHCL ACDEDOEHPK                     ACDEDOEHCL                     TABLE ACCESS BY INDEX ROWID           0 ACDEDOEHPK                      INDEX       RANGE SCAN       2        ,32      31,23
+ACE1COTHCL ACE1COTHPK                     ACE1COTHPK                     INDEX        RANGE SCAN               3                                                                      1,45          0
+           ACE1COTHPK                     ACE1COTHPK                     INDEX        UNIQUE SCAN              7                                                                       ,34      12,25
+           ACE1COTHPK                     ACE1COTHCL                     TABLE ACCESS BY INDEX ROWID           0 ACE1COTHPK                      INDEX       UNIQUE SCAN      7       1,69      48,23
+           ACE1COTHPK                     ACE1COTHCL                     TABLE ACCESS BY INDEX ROWID           0 ACE1COTHPK                      INDEX       RANGE SCAN       3       3,75          0
+           ACE1N004                       ACE1COTHCL                     TABLE ACCESS BY INDEX ROWID           0 ACE1N004                        INDEX       RANGE SCAN       2        ,38          0
+ACE2COCHCL ACE2COCHPK                     ACE2COCHCL                     TABLE ACCESS BY INDEX ROWID           0 ACE2COCHPK                      INDEX       UNIQUE SCAN      5        ,27      59,62
+           ACE2COCHPK                     ACE2COCHCL                     TABLE ACCESS BY INDEX ROWID           0 ACE2COCHPK                      INDEX       RANGE SCAN       3        ,15          0
+ACH1CTIHCL ACH1CTIHPK                     ACH1CTIHCL                     TABLE ACCESS BY INDEX ROWID           0 ACH1CTIHPK                      INDEX       RANGE SCAN       1        ,37       19,2
+ACH2ASSHCL ACH2ACOPFK                     ACH2ACOPFK                     INDEX        RANGE SCAN               1                                                                       ,12      16,71
+           ACH2ACOPFK                     ACH2ASSHCL                     TABLE ACCESS BY INDEX ROWID           0 ACH2ACOPFK                      INDEX       RANGE SCAN       1        ,41      11,34
+           ACH2PEREFK                     ACH2ASSHCL                     TABLE ACCESS BY INDEX ROWID           0 ACH2PEREFK                      INDEX       RANGE SCAN       1         ,3        ,02
+ACH4GASHCL ACH4GASHPK                     ACH4GASHPK                     INDEX        RANGE SCAN               2                                                                       ,15       9,82
+           ACH4GASHPK                     ACH4GASHCL                     TABLE ACCESS BY INDEX ROWID           0 ACH4GASHPK                      INDEX       RANGE SCAN       2        ,59       7,71
+ACM1MECCCL ACM1MECCPK                     ACM1MECCCL                     TABLE ACCESS BY INDEX ROWID           0 ACM1MECCPK                      INDEX       RANGE SCAN       3        ,81      19,22
+           ACM1MECCPK                     ACM1MECCPK                     INDEX        RANGE SCAN               7                                                                       ,13          0
+           ACM1MECCPK                     ACM1MECCCL                     TABLE ACCESS BY INDEX ROWID           0 ACM1MECCPK                      INDEX       RANGE SCAN       7        ,13          0
+           ACM1MECCPK                     ACM1MECCPK                     INDEX        RANGE SCAN               3                                                                       ,23      16,28
+ACM2MECCCL ACM2MECCPK                     ACM2MECCCL                     TABLE ACCESS BY INDEX ROWID           0 ACM2MECCPK                      INDEX       RANGE SCAN       3         ,2       59,3
+ACNEECNOCL ACNEECNOP4                     ACNEECNOCL                     TABLE ACCESS BY INDEX ROWID           0 ACNEECNOP4                      INDEX       RANGE SCAN       2        ,52        ,96
+ACOFOFFHCI ACOFOFFHPK                     ACOFOFFHCI                     TABLE ACCESS BY INDEX ROWID           0 ACOFOFFHPK                      INDEX       RANGE SCAN       2        ,12      27,79
+ACOPOPERCL ACOPI002                       ACOPOPERCL                     TABLE ACCESS BY INDEX ROWID           0 ACOPI002                        INDEX       RANGE SCAN       2       1,09      30,61
+           ACOPI002                       ACOPOPERCL                     TABLE ACCESS BY INDEX ROWID           0 ACOPI002                        INDEX       UNIQUE SCAN      3        ,75       18,3
+           ACOPI002                       ACOPOPERCL                     TABLE ACCESS BY INDEX ROWID           0 ACOPI002                        INDEX       RANGE SCAN       1         ,2      88,01
+           ACOPI002                       ACOPI002                       INDEX        UNIQUE SCAN              3                                                                      1,59      22,64
+           ACOPI002                       ACOPI002                       INDEX        RANGE SCAN               2                                                                       ,13        ,56
+           ACOPOPERPK                     ACOPOPERPK                     INDEX        UNIQUE SCAN              2                                                                      1,56       5,69
+           ACOPOPERPK                     ACOPOPERCL                     TABLE ACCESS BY INDEX ROWID           0 ACOPOPERPK                      INDEX       UNIQUE SCAN      2       2,08       2,47
+           MY_ACOPOPERCL_ACOBR1_TYPOPE    ACOPOPERCL                     TABLE ACCESS BY INDEX ROWID           0 MY_ACOPOPERCL_ACOBR1_TYPOPE     INDEX       RANGE SCAN       1       1,99      23,67
+           MY_ACOPOPERCL_ACOBR1_TYPOPE    ACOPOPERCL                     TABLE ACCESS BY INDEX ROWID           0 MY_ACOPOPERCL_ACOBR1_TYPOPE     INDEX       RANGE SCAN       2        ,29      83,81
+ECC1CDIHCL ECC1ECOCFK                     ECC1CDIHCL                     TABLE ACCESS BY INDEX ROWID           0 ECC1ECOCFK                      INDEX       RANGE SCAN       1       2,66      52,89
+           ECC1ECOCFK                     ECC1ECOCFK                     INDEX        RANGE SCAN               1                                                                       ,26      24,95
+ECD1DBINCL AAA_ECD1                       ECD1DBINCL                     TABLE ACCESS BY INDEX ROWID           0 AAA_ECD1                        INDEX       RANGE SCAN       2        ,81      26,79
+           AAA_ECD1                       ECD1DBINCL                     TABLE ACCESS BY INDEX ROWID           0 AAA_ECD1                        INDEX       RANGE SCAN       1        ,85      65,26
+           AAA_ECD1                       AAA_ECD1                       INDEX        RANGE SCAN               2                                                                       ,15      24,46
+           MY_ECD1DBINCL_ER1_DTC_NOP_MTC  MY_ECD1DBINCL_ER1_DTC_NOP_MTC  INDEX        RANGE SCAN               2                                                                       ,27      65,68
+ECDOADMHCL ECDOOK01                       ECDOADMHCL                     TABLE ACCESS BY INDEX ROWID           0 ECDOOK01                        INDEX       RANGE SCAN       1        ,15      27,04
+           PK_ECDOADMHCL                  ECDOADMHCL                     TABLE ACCESS BY INDEX ROWID           0 PK_ECDOADMHCL                   INDEX       RANGE SCAN       1        ,13      27,52
+ECFICPRHCL PK_ECFICPRHCL                  ECFICPRHCL                     TABLE ACCESS BY INDEX ROWID           0 PK_ECFICPRHCL                   INDEX       RANGE SCAN       1        ,25      90,93
+ECOCOMPTCL ECOCOMPTP1                     ECOCOMPTP1                     INDEX        RANGE SCAN               1                                                                       ,27      24,08
+           ECOCOMPTP1                     ECOCOMPTCL                     TABLE ACCESS BY INDEX ROWID           0 ECOCOMPTP1                      INDEX       RANGE SCAN       1       4,57      45,13
+           PK_ECOCOMPTCL                  ECOCOMPTCL                     TABLE ACCESS BY INDEX ROWID           0 PK_ECOCOMPTCL                   INDEX       RANGE SCAN       1        ,34      76,05
+           PK_ECOCOMPTCL                  PK_ECOCOMPTCL                  INDEX        UNIQUE SCAN              2                                                                       ,18      23,33
+           PK_ECOCOMPTCL                  ECOCOMPTCL                     TABLE ACCESS BY INDEX ROWID           0 PK_ECOCOMPTCL                   INDEX       UNIQUE SCAN      2        ,27      27,79
+ECOPRELVCL PK_ECOPRELVCL                  ECOPRELVCL                     TABLE ACCESS BY INDEX ROWID           0 PK_ECOPRELVCL                   INDEX       UNIQUE SCAN      2        ,57      76,67
+ECOREGLMCL PK_ECOREGLMCL                  PK_ECOREGLMCL                  INDEX        RANGE SCAN DESCENDING    1                                                                       ,11      74,91
+           PK_ECOREGLMCL                  ECOREGLMCL                     TABLE ACCESS BY INDEX ROWID           0 PK_ECOREGLMCL                   INDEX       RANGE SCAN DESCE 1        ,1       92,5
+ECREGLMHCL PK_ECREGLMHCL                  PK_ECREGLMHCL                  INDEX        UNIQUE SCAN              2                                                                       ,15      75,88
+           PK_ECREGLMHCL                  ECREGLMHCL                     TABLE ACCESS BY INDEX ROWID           0 PK_ECREGLMHCL                   INDEX       UNIQUE SCAN      2        ,14      76,46
+ECRGLEMECL PK_ECRGLEMECL                  PK_ECRGLEMECL                  INDEX        UNIQUE SCAN              1                                                                       ,15      41,44
+           PK_ECRGLEMECL                  ECRGLEMECL                     TABLE ACCESS BY INDEX ROWID           0 PK_ECRGLEMECL                   INDEX       UNIQUE SCAN      1        ,37      22,39
+ENAEXTERCL ENAECLEOPE                     ENAECLEOPE                     INDEX        RANGE SCAN               3                                                                       ,15      93,76
+           ENAEPEPEI1                     ENAEXTERCL                     TABLE ACCESS BY INDEX ROWID           0 ENAEPEPEI1                      INDEX       RANGE SCAN       1        ,19      94,43
+ENAOBJETCL ENAOBJETPK                     ENAOBJETCL                     TABLE ACCESS BY INDEX ROWID           0 ENAOBJETPK                      INDEX       RANGE SCAN       1        ,17      94,22
+           ENAOBJETPK                     ENAOBJETPK                     INDEX        RANGE SCAN               1                                                                       ,14      93,27
+ENHACTIOCL ENHACTIOPK                     ENHACTIOCL                     TABLE ACCESS BY INDEX ROWID           0 ENHACTIOPK                      INDEX       RANGE SCAN       1         ,2      94,56
+           ENHACTIOPK                     ENHACTIOPK                     INDEX        RANGE SCAN               1                                                                       ,13       93,8
+PEADRESSCL PEADRESSPK                     PEADRESSCL                     TABLE ACCESS BY INDEX ROWID           0 PEADRESSPK                      INDEX       UNIQUE SCAN      1         ,2      30,75
+PEAFROCL   PEAFROPK                       PEAFROCL                       TABLE ACCESS BY INDEX ROWID           0 PEAFROPK                        INDEX       UNIQUE SCAN      1         ,1      19,96
+PEAPADPECI PEAP0001ID                     PEAPADPECI                     TABLE ACCESS BY INDEX ROWID           0 PEAP0001ID                      INDEX       RANGE SCAN       1         ,1      88,94
+           PEAPCLEFID                     PEAPADPECI                     TABLE ACCESS BY INDEX ROWID           0 PEAPCLEFID                      INDEX       RANGE SCAN       3        ,12      16,45
+PECPCARACL PECPCLEFID                     PECPCARACL                     TABLE ACCESS BY INDEX ROWID           0 PECPCLEFID                      INDEX       RANGE SCAN       1        ,25      24,14
+PEEPEVPECI PEEPPER1ID                     PEEPEVPECI                     TABLE ACCESS BY INDEX ROWID           0 PEEPPER1ID                      INDEX       RANGE SCAN       1        ,65      22,61
+           PEEPPER1ID                     PEEPPER1ID                     INDEX        RANGE SCAN               1                                                                       ,24      20,75
+PEEREVRECI PEERRER1ID                     PEEREVRECI                     TABLE ACCESS BY INDEX ROWID           0 PEERRER1ID                      INDEX       RANGE SCAN       1         ,1       49,3
+PEEVTCL    PEEVTPK                        PEEVTCL                        TABLE ACCESS BY INDEX ROWID           0 PEEVTPK                         INDEX       UNIQUE SCAN      1        ,67      23,48
+           PEEVTPK                        PEEVTPK                        INDEX        UNIQUE SCAN              1                                                                       ,16      37,63
+PENOMPERCL PENOMPERPK                     PENOMPERCL                     TABLE ACCESS BY INDEX ROWID           0 PENOMPERPK                      INDEX       UNIQUE SCAN      1        ,33      14,85
+PENPNOPECI PENPCLEFID                     PENPNOPECI                     TABLE ACCESS BY INDEX ROWID           0 PENPCLEFID                      INDEX       RANGE SCAN       3        ,17       4,94
+PEPERSONCL PEPERSONPK                     PEPERSONCL                     TABLE ACCESS BY INDEX ROWID           0 PEPERSONPK                      INDEX       UNIQUE SCAN      1        ,15      29,97
+PERELATICL PERELATIPK                     PERELATICL                     TABLE ACCESS BY INDEX ROWID           0 PERELATIPK                      INDEX       UNIQUE SCAN      1        ,12       5,46
+           PEREPER1ID                     PERELATICL                     TABLE ACCESS BY INDEX ROWID           0 PEREPER1ID                      INDEX       RANGE SCAN       1        ,16       24,1
+PEROROCL   PEROPER1ID                     PEROROCL                       TABLE ACCESS BY INDEX ROWID           0 PEROPER1ID                      INDEX       RANGE SCAN       1        ,27      13,19
+PSDECOMPCL IPKPSDE                        PSDECOMPCL                     TABLE ACCESS BY INDEX ROWID           0 IPKPSDE                         INDEX       UNIQUE SCAN      2       2,05       1,69
+           IPKPSDE                        IPKPSDE                        INDEX        UNIQUE SCAN              2                                                                       ,66          5
+           IPKPSDE                        IPKPSDE                        INDEX        RANGE SCAN               1                                                                       ,13      92,87
+           IPKPSDE                        PSDECOMPCL                     TABLE ACCESS BY INDEX ROWID           0 IPKPSDE                         INDEX       RANGE SCAN       1        ,21      93,02
+           PSDEDATCLT2                    PSDECOMPCL                     TABLE ACCESS BY INDEX ROWID           0 PSDEDATCLT2                     INDEX       RANGE SCAN       1        ,16        ,13
+           PSDEDATCLT2                    PSDECOMPCL                     TABLE ACCESS BY INDEX ROWID           0 PSDEDATCLT2                     INDEX       RANGE SCAN       1        ,72          0
+           PSDENCONID                     PSDECOMPCL                     TABLE ACCESS BY INDEX ROWID           0 PSDENCONID                      INDEX       RANGE SCAN       1        ,87       92,6
+PSDHISTOCL PK_PSDHISTOCL                  PSDHISTOCL                     TABLE ACCESS BY INDEX ROWID           0 PK_PSDHISTOCL                   INDEX       UNIQUE SCAN      3        ,24       59,6
+           PK_PSDHISTOCL                  PK_PSDHISTOCL                  INDEX        UNIQUE SCAN              3                                                                       ,28      53,73
+PSDMANDECL PK_PSDMANDECL                  PSDMANDECL                     TABLE ACCESS BY INDEX ROWID           0 PK_PSDMANDECL                   INDEX       UNIQUE SCAN      4        ,23          0
+           PK_PSDMANDECL                  PSDMANDECL                     TABLE ACCESS BY INDEX ROWID           0 PK_PSDMANDECL                   INDEX       UNIQUE SCAN      4        ,15      45,17
+           PK_PSDMANDECL                  PK_PSDMANDECL                  INDEX        UNIQUE SCAN              4                                                                        ,1      62,14
+PSDPERSICL PK_PSDPERSICL                  PK_PSDPERSICL                  INDEX        UNIQUE SCAN              2                                                                       ,15      62,86
+           PK_PSDPERSICL                  PSDPERSICL                     TABLE ACCESS BY INDEX ROWID           0 PK_PSDPERSICL                   INDEX       UNIQUE SCAN      2        ,21      62,98
+PSDURECUCL PK_PSDURECUCL                  PSDURECUCL                     TABLE ACCESS BY INDEX ROWID           0 PK_PSDURECUCL                   INDEX       UNIQUE SCAN      1        ,43      76,59
+           PK_PSDURECUCL                  PK_PSDURECUCL                  INDEX        UNIQUE SCAN              1                                                                       ,26      81,98
+PSEOPERSCL PK_PSEOPERSCL                  PSEOPERSCL                     TABLE ACCESS BY INDEX ROWID           0 PK_PSEOPERSCL                   INDEX       UNIQUE SCAN      2        ,15      65,56
+PSEPERSICL PK_PSEPERSICL                  PSEPERSICL                     TABLE ACCESS BY INDEX ROWID           0 PK_PSEPERSICL                   INDEX       UNIQUE SCAN      2        ,21        ,71
+           PK_PSEPERSICL                  PK_PSEPERSICL                  INDEX        UNIQUE SCAN              2                                                                       ,71      16,49
+           PK_PSEPERSICL                  PSEPERSICL                     TABLE ACCESS BY INDEX ROWID           0 PK_PSEPERSICL                   INDEX       UNIQUE SCAN      2       2,51          8
+           PSEPNUROID                     PSEPERSICL                     TABLE ACCESS BY INDEX ROWID           0 PSEPNUROID                      INDEX       RANGE SCAN       2        ,17      92,85
+PSLDECOMCL PK_PSLDECOMCL                  PK_PSLDECOMCL                  INDEX        RANGE SCAN               2                                                                        ,6       1,95
+           PK_PSLDECOMCL                  PSLDECOMCL                     TABLE ACCESS BY INDEX ROWID           0 PK_PSLDECOMCL                   INDEX       UNIQUE SCAN      3        ,12          0
+PSMEGAPECL IDX_PSME                       IDX_PSME                       INDEX        RANGE SCAN               1                                                                       ,26      10,28
+           IDX_PSME                       PSMEGAPECL                     TABLE ACCESS BY LOCAL INDEX ROWID     0 IDX_PSME                        INDEX       RANGE SCAN       1       4,75      10,35
+PSODPAIECL IFKPSODACDP                    PSODPAIECL                     TABLE ACCESS BY INDEX ROWID           0 IFKPSODACDP                     INDEX       RANGE SCAN       2        1,1      28,51
+PSOSANTECL PK_PSOSANTECL                  PSOSANTECL                     TABLE ACCESS BY INDEX ROWID           0 PK_PSOSANTECL                   INDEX       UNIQUE SCAN      2        ,18      52,67
+           PK_PSOSANTECL                  PSOSANTECL                     TABLE ACCESS BY INDEX ROWID           0 PK_PSOSANTECL                   INDEX       RANGE SCAN       1        ,18      43,84
+           PK_PSOSANTECL                  PK_PSOSANTECL                  INDEX        UNIQUE SCAN              2                                                                       ,15      57,45
+PSRLSANTCL PK_PSRLSANTCL                  PSRLSANTCL                     TABLE ACCESS BY INDEX ROWID           0 PK_PSRLSANTCL                   INDEX       UNIQUE SCAN      1        ,24          0
+ZZJBOITECL ZZJBN006                       ZZJBN006                       INDEX        RANGE SCAN               4                                                                       ,23          0
+ZZJOURNACL PK_ZZJOURNACL                  ZZJOURNACL                     TABLE ACCESS BY INDEX ROWID           0 PK_ZZJOURNACL                   INDEX       UNIQUE SCAN      1         ,3       2,29
+           ZZJOIND1                       ZZJOURNACL                     TABLE ACCESS BY INDEX ROWID           0 ZZJOIND1                        INDEX       RANGE SCAN       1         ,1      89,91

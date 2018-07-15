@@ -1,0 +1,9 @@
+GROUPS 1647054 combien des groups differents
+BLOCKS_PER_GROUP_MIN 1 min blocks per group
+BLOCKS_PER_GROUP_MAX 771 max blocks per group
+BLOCKS_PER_GROUP_AVG 2.87 avg blocks per group
+BLOCKS_PER_GROUP_STDDEV 4.7 stddev of blocks per group
+RANGES_PER_GROUP_MIN 1 min chaine length of blocks consequents per group
+RANGES_PER_GROUP_MAX 681 max chaine length of blocks consequents per group
+RANGES_PER_GROUP_AVG 1.56 avg chaine length of blocks consequents per group
+RANGES_PER_GROUP_STDDEV 2.57 stddev of chaine length of blocks consequents per group
